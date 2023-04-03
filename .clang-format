@@ -1,0 +1,32 @@
+BasedOnStyle: WebKit
+AlignAfterOpenBracket: AlwaysBreak
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments: AcrossComments
+AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
+AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBinaryOperators: NonAssignment
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterComma
+ColumnLimit: 120
+EmptyLineBeforeAccessModifier: Always
+IncludeBlocks: Regroup
+IndentWidth: 4
+Language: Cpp
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+SortIncludes: CaseSensitive
+SortUsingDeclarations: true
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+Standard: Auto
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterControlStatement: Never

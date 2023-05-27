@@ -20,8 +20,8 @@ public:
     virtual inline T &at(size_t i, size_t j) = 0;
     virtual inline const V1<T> &at(size_t i) const = 0;
     virtual inline V1<T> &at(size_t i) = 0;
-    virtual inline const size_t &getRowsize() const = 0;
-    virtual inline const size_t &getColsize() const = 0;
+    virtual inline const size_t getRowsize() const = 0;
+    virtual inline const size_t getColsize() const = 0;
     virtual std::string to_string() const = 0;
 };
 template <typename T> std::ostream &operator<<(std::ostream &stream, const Matrix<T> &m);

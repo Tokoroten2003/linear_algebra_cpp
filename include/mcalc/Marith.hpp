@@ -45,12 +45,6 @@ private:
     /// @brief Rank of the matrix
     size_t rank;
 
-    /// @brief Size of the row
-    const size_t rowsize;
-
-    /// @brief Size of the column
-    const size_t colsize;
-
     /// @brief Elementary row operations
     const ElemRowOp erowop;
 
@@ -78,8 +72,8 @@ public:
     inline T& at(size_t i, size_t j) override;
     inline const V1<T>& at(size_t i) const override;
     inline V1<T>& at(size_t i) override;
-    inline const size_t& getRowsize() const override;
-    inline const size_t& getColsize() const override;
+    inline const size_t getRowsize() const override;
+    inline const size_t getColsize() const override;
     std::string to_string() const override;
 
     Marith<T> transpose() const;
@@ -113,8 +107,8 @@ mcalc::Marith<T>::Marith() : erowop(this) {}
  * @param m
  */
 template <typename T>
-mcalc::Marith<T>::Marith(const Matrix<T>& m) :
-    data(m.getData()), rowsize(m.getRowsize()), colsize(m.getColsize()), rank(), erowop(this) {}
+mcalc::Marith<T>::Marith(const mcalc::Matrix<T>& m) :
+    data(m.getData()), rank(), erowop(this) {}
 /**
  * @brief Construct a new mcalc::Marith<T>::Marith object
  *
@@ -125,7 +119,7 @@ mcalc::Marith<T>::Marith(const Matrix<T>& m) :
  */
 template <typename T>
 mcalc::Marith<T>::Marith(const V2<T> mat, const size_t row_size, const size_t col_size) :
-    data(mat), rowsize(row_size), colsize(col_size), rank(), erowop(this) {
+    data(mat), rank(), erowop(this) {
     size_t rows = getRowsize();
     size_t cols = getColsize();
     size_t drs  = this->data.size();
@@ -215,7 +209,10 @@ inline bool mcalc::Marith<T>::operator!=(const mcalc::Matrix<T>& m) const {
  */
 template <typename T>
 mcalc::Marith<T>& mcalc::Marith<T>::operator=(const mcalc::Matrix<T>& m) {
-    Marith(m.getData());
+    if (this->getRowsize() != m.getRowsize() || this->getColsize() != m.getColsize()) {
+        throw bad_cast();
+    }
+    this->data = m.getData();
     return *this;
 }
 /**
@@ -227,8 +224,8 @@ mcalc::Marith<T>& mcalc::Marith<T>::operator=(const mcalc::Matrix<T>& m) {
  */
 template <typename T>
 mcalc::Marith<T>& mcalc::Marith<T>::operator+=(const mcalc::Matrix<T>& m) {
-    size_t rows  = getRowsize();
-    size_t cols  = getColsize();
+    size_t rows  = this->getRowsize();
+    size_t cols  = this->getColsize();
     size_t mrows = m.getRowsize();
     size_t mcols = m.getColsize();
     if (rows != mrows || cols != mcols) {
@@ -250,8 +247,8 @@ mcalc::Marith<T>& mcalc::Marith<T>::operator+=(const mcalc::Matrix<T>& m) {
  */
 template <typename T>
 mcalc::Marith<T>& mcalc::Marith<T>::operator-=(const mcalc::Matrix<T>& m) {
-    size_t rows  = getRowsize();
-    size_t cols  = getColsize();
+    size_t rows  = this->getRowsize();
+    size_t cols  = this->getColsize();
     size_t mrows = m.getRowsize();
     size_t mcols = m.getColsize();
     if (rows != mrows || cols != mcols) {
@@ -273,8 +270,8 @@ mcalc::Marith<T>& mcalc::Marith<T>::operator-=(const mcalc::Matrix<T>& m) {
  */
 template <typename T>
 mcalc::Marith<T>& mcalc::Marith<T>::operator*=(const T s) {
-    for (size_t i = 0; i < getRowsize(); i++) {
-        for (size_t j = 0; j < getColsize(); j++) {
+    for (size_t i = 0; i < this->getRowsize(); i++) {
+        for (size_t j = 0; j < this->getColsize(); j++) {
             at(i, j) = s * at(i, j);
         }
     }
@@ -288,7 +285,7 @@ mcalc::Marith<T>& mcalc::Marith<T>::operator*=(const T s) {
  * @return mcalc::Marith<T>&
  */
 template <typename T>
-mcalc::Marith<T>& mcalc::Marith<T>::operator*=(const Matrix<T>& m) {
+mcalc::Marith<T>& mcalc::Marith<T>::operator*=(const mcalc::Matrix<T>& m) {
     size_t rows  = this->getRowsize();
     size_t cols  = this->getColsize();
     size_t mrows = m.getRowsize();
@@ -456,8 +453,8 @@ inline mcalc::V1<T>& mcalc::Marith<T>::at(size_t i) {
  * @return const size_t&
  */
 template <typename T>
-inline const size_t& mcalc::Marith<T>::getRowsize() const {
-    return rowsize;
+inline const size_t mcalc::Marith<T>::getRowsize() const {
+    return this->data.size();
 }
 /**
  * @brief Return the column size of *this
@@ -466,8 +463,8 @@ inline const size_t& mcalc::Marith<T>::getRowsize() const {
  * @return const size_t&
  */
 template <typename T>
-inline const size_t& mcalc::Marith<T>::getColsize() const {
-    return colsize;
+inline const size_t mcalc::Marith<T>::getColsize() const {
+    return this->data.size() > 0 ? this->data.at(0).size() : 0;
 }
 /**
  * @brief Return string-expression of *this

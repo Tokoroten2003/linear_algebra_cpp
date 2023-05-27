@@ -20,7 +20,7 @@ public:
     SqMarith(const size_t size_of_matrix);
 
     // return the size of this matrix
-    inline const size_t &getSize() const;
+    inline const size_t getSize() const;
     // return the determinant of this matrix
     T determinant();
     // return boolian: if this matrix is regular or not
@@ -57,7 +57,7 @@ template <typename T>
 mcalc::SqMarith<T>::SqMarith(const size_t size_of_matrix)
     : Marith<T>::Marith(size_of_matrix, size_of_matrix), isregular() {}
 
-template <typename T> inline const size_t &mcalc::SqMarith<T>::getSize() const { return this->getRowsize(); }
+template <typename T> inline const size_t mcalc::SqMarith<T>::getSize() const { return this->getRowsize(); }
 template <typename T> T mcalc::SqMarith<T>::determinant() {
     SqMarith<T> m(this->getData());
     size_t msize = m.getSize();

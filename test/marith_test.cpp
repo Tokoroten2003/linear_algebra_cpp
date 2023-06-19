@@ -6,30 +6,42 @@ constexpr size_t m = 100;
 constexpr size_t n = 100;
 
 namespace {
-TEST(MarithIntConstractorTest, def) {
+TEST(MarithConstructorTest, no_initializer) {
     try {
-        mcalc::Marith<int, m, n> mat_target;
+        mcalc::Marith<int, m, n> marith_int_target;
+        mcalc::Marith<float, m, n> marith_float_target;
     } catch (const std::exception& e) {
-        FAIL();
+        FAIL() << "exception thrown: " << e.what() << std::endl;
     }
 }
-TEST(MarithIntConstractorTest, copy) {
-    mcalc::Marith<int, m, n> mat;
+TEST(MarithConstructorTest, copy) {
+    mcalc::Marith<int, m, n> marith_int;
+    mcalc::Marith<float, m, n> marith_float;
     try {
-        mcalc::Marith<int, m, n> mat_target = mat;
-        ASSERT_NE(&mat, &mat_target);
-        ASSERT_EQ(mat.getElems(), mat_target.getElems());
-    } catch(const std::exception& e) {
-        FAIL();
+        mcalc::Marith<int, m, n> marith_int_target     = marith_int;
+        mcalc::Marith<float, m, n> marith_float_target = marith_float;
+    } catch (const std::exception& e) {
+        FAIL() << "exception thrown: " << e.what() << std::endl;
     }
 }
-TEST(MarithIntConstractorTest, from_array) {
-    std::array<std::array<int, n>, m> arr;
+TEST(MarithConstructorTest, move) {
+    mcalc::Marith<int, m, n> marith_int;
+    mcalc::Marith<float, m, n> marith_float;
     try {
-        mcalc::Marith<int, m, n> mat_target(arr);
-        ASSERT_EQ(arr, mat_target.getElems());
-    } catch(const std::exception& e) {
-        FAIL();
+        mcalc::Marith<int, m, n> marith_int_target     = std::move(marith_int);
+        mcalc::Marith<float, m, n> marith_float_target = std::move(marith_float);
+    } catch (const std::exception& e) {
+        FAIL() << "exception thrown: " << e.what() << std::endl;
+    }
+}
+TEST(MarithConstructorTest, from_array) {
+    std::array<std::array<int, n>, m> arr_int;
+    std::array<std::array<float, n>, m> arr_float;
+    try {
+        mcalc::Marith<int, m, n> marith_int_target(std::move(arr_int));
+        mcalc::Marith<float, m, n> marith_float_target(std::move(arr_float));
+    } catch (const std::exception& e) {
+        FAIL() << "exception thrown: " << e.what() << std::endl;
     }
 }
 } // namespace

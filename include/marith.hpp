@@ -1,5 +1,5 @@
 #include <array>
-#include <ostream>
+#include <iostream>
 #include <type_traits>
 
 namespace mcalc {
@@ -32,7 +32,24 @@ public:
     inline Marith<T, rowN, colN>& operator-=(const Marith<T, rowN, colN>& r_mat);
     inline Marith<T, rowN, colN>& operator*=(const T& r_value);
     inline Marith<T, rowN, colN>& operator*=(const Marith<T, rowN, rowN>& r_mat);
+
+private:
+    template <typename U, std::size_t rowN2, std::size_t colN2>
+    inline Marith<U, rowN2, colN2> conversion() const;
 };
+
+template <typename T, std::size_t rowN, std::size_t colN>
+inline std::ostream& operator<<(std::ostream& l_stream, const Marith<T, rowN, colN>& r_mat);
+template <typename T, std::size_t rowN, std::size_t colN>
+inline Marith<T, rowN, colN> operator+(const Marith<T, rowN, colN>& l_mat, const Marith<T, rowN, colN>& r_mat);
+template <typename T, std::size_t rowN, std::size_t colN>
+inline Marith<T, rowN, colN> operator-(const Marith<T, rowN, colN>& l_mat, const Marith<T, rowN, colN>& r_mat);
+template <typename T, std::size_t rowN, std::size_t colN>
+inline Marith<T, rowN, colN> operator*(const Marith<T, rowN, colN>& l_mat, const T& r_value);
+template <typename T, std::size_t rowN, std::size_t colN>
+inline Marith<T, rowN, colN> operator*(const T& l_value, const Marith<T, rowN, colN>& r_mat);
+template <typename T, std::size_t rowN, std::size_t colN, std::size_t colN2>
+inline Marith<T, rowN, colN2> operator*(const Marith<T, rowN, colN>& l_mat, const Marith<T, colN, colN2>& r_mat);
 } // namespace mcalc
 
 // ---------------------------
@@ -148,4 +165,71 @@ mcalc::Marith<T, rowN, colN>::operator*=(const mcalc::Marith<T, rowN, rowN>& r_m
     }
     setElems(std::move(result));
     return *this;
+}
+template <typename T, std::size_t rowN, std::size_t colN>
+template <typename U, std::size_t rowN2, std::size_t colN2>
+mcalc::Marith<U, rowN2, colN2> mcalc::Marith<T, rowN, colN>::conversion() const {
+    mcalc::Marith<U, rowN2, colN2> result;
+    for (std::size_t i = 0; i < rowN2; i++) {
+        if (i >= rowN) {
+            break;
+        }
+        for (std::size_t j = 0; j < colN2; j++) {
+            if (j >= colN) {
+                break;
+            }
+            result.at(i, j) = static_cast<U>(at_const(i, j));
+        }
+    }
+    return result;
+}
+
+template <typename T, std::size_t rowN, std::size_t colN>
+std::ostream& mcalc::operator<<(std::ostream& l_stream, const mcalc::Marith<T, rowN, colN>& r_mat) {
+    l_stream << "[ ";
+    for (std::size_t i = 0; i < rowN; i++) {
+        for (std::size_t j = 0; j < colN; j++) {
+            l_stream << r_mat.at_const(i, j) << (j < colN - 1 ? " " : (i < rowN - 1 ? " \\\\ " : " ]"));
+        }
+    }
+    return l_stream;
+}
+template <typename T, std::size_t rowN, std::size_t colN>
+mcalc::Marith<T, rowN, colN>
+mcalc::operator+(const mcalc::Marith<T, rowN, colN>& l_mat, const mcalc::Marith<T, rowN, colN>& r_mat) {
+    mcalc::Marith<T, rowN, colN> result = l_mat;
+    result += r_mat;
+    return result;
+}
+template <typename T, std::size_t rowN, std::size_t colN>
+mcalc::Marith<T, rowN, colN>
+mcalc::operator-(const mcalc::Marith<T, rowN, colN>& l_mat, const mcalc::Marith<T, rowN, colN>& r_mat) {
+    mcalc::Marith<T, rowN, colN> result = l_mat;
+    result -= r_mat;
+    return result;
+}
+template <typename T, std::size_t rowN, std::size_t colN>
+mcalc::Marith<T, rowN, colN> mcalc::operator*(const mcalc::Marith<T, rowN, colN>& l_mat, const T& r_value) {
+    mcalc::Marith<T, rowN, colN> result = l_mat;
+    result *= r_value;
+    return result;
+}
+template <typename T, std::size_t rowN, std::size_t colN>
+mcalc::Marith<T, rowN, colN> mcalc::operator*(const T& l_value, const mcalc::Marith<T, rowN, colN>& r_mat) {
+    return r_mat * l_value;
+}
+template <typename T, std::size_t rowN, std::size_t colN, std::size_t colN2>
+mcalc::Marith<T, rowN, colN2>
+mcalc::operator*(const mcalc::Marith<T, rowN, colN>& l_mat, const mcalc::Marith<T, colN, colN2>& r_mat) {
+    mcalc::Marith<T, rowN, colN2> result;
+    for (std::size_t i = 0; i < rowN; i++) {
+        for (std::size_t j = 0; j < colN2; j++) {
+            T elem = 0;
+            for (std::size_t k = 0; k < colN; k++) {
+                elem += l_mat.at_const(i, k) * r_mat.at_const(k, j);
+            }
+            result.at(i, j) = elem;
+        }
+    }
+    return result;
 }

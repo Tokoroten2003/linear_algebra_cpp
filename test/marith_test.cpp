@@ -199,6 +199,88 @@ TYPED_TEST(MarithAssignmentOperatorTest, MatrixProductionAssignment) {
     this->mat_ltarget_f *= mat_rtarget_prod_f;
     EXPECT_EQ(mat_result, this->mat_ltarget_f);
 }
+template <typename T>
+class MarithStreamOperatorTest : public ::testing::Test {
+protected:
+    mcalc::Marith<T, m, n> mat_target_f;
+    virtual void SetUp() {
+        for (std::size_t i = 0; i < m; i++) {
+            for (std::size_t j = 0; j < n; j++) {
+                mat_target_f.at(i, j) = i / (j + 1);
+            }
+        }
+    }
+};
+TYPED_TEST_CASE(MarithStreamOperatorTest, MarithTypes);
+TYPED_TEST(MarithStreamOperatorTest, Ostream) {
+    EXPECT_NO_THROW({ std::cout << this->mat_target_f << std::endl; });
+}
+template <typename T>
+class MarithArithmeticOperatorTest : public ::testing::Test {
+protected:
+    mcalc::Marith<T, m, n> mat_ltarget_f;
+    mcalc::Marith<T, m, n> mat_rtarget_f;
+    mcalc::Marith<T, n, n2> mat_rtarget_prod_f;
+    const T scalar = 1.5;
+    virtual void SetUp() {
+        for (std::size_t i = 0; i < m; i++) {
+            for (std::size_t j = 0; j < n; j++) {
+                mat_ltarget_f.at(i, j)    = i + j;
+                mat_rtarget_f.at(i, j)    = i - j;
+            }
+        }
+        for (std::size_t i = 0; i < n; i++) {
+            for (std::size_t j = 0; j < n2; j++) {
+                mat_rtarget_prod_f.at(i, j) = i * j;
+            }
+        }
+    }
+};
+TYPED_TEST_CASE(MarithArithmeticOperatorTest, MarithTypes);
+TYPED_TEST(MarithArithmeticOperatorTest, Addition) {
+    mcalc::Marith<TypeParam, m, n> mat_result;
+    for (std::size_t i = 0; i < m; i++) {
+        for (std::size_t j = 0; j < n; j++) {
+            mat_result.at(i, j) = this->mat_ltarget_f.at_const(i, j) + this->mat_rtarget_f.at_const(i, j);
+        }
+    }
+    EXPECT_EQ(mat_result, this->mat_ltarget_f + this->mat_rtarget_f);
+}
+TYPED_TEST(MarithArithmeticOperatorTest, Substraction) {
+    mcalc::Marith<TypeParam, m, n> mat_result;
+    for (std::size_t i = 0; i < m; i++) {
+        for (std::size_t j = 0; j < n; j++) {
+            mat_result.at(i, j) = this->mat_ltarget_f.at_const(i, j) - this->mat_rtarget_f.at_const(i, j);
+        }
+    }
+    EXPECT_EQ(mat_result, this->mat_ltarget_f - this->mat_rtarget_f);
+}
+TYPED_TEST(MarithArithmeticOperatorTest, ScalarProduction) {
+    mcalc::Marith<TypeParam, m, n> mat_result1;
+    mcalc::Marith<TypeParam, m, n> mat_result2;
+    constexpr TypeParam r_value = 3;
+    constexpr TypeParam l_value = 2;
+    for (std::size_t i = 0; i < m; i++) {
+        for (std::size_t j = 0; j < n; j++) {
+            mat_result1.at(i, j) = this->mat_ltarget_f.at_const(i, j) * r_value;
+            mat_result2.at(i, j) = l_value * this->mat_rtarget_f.at_const(i, j);
+        }
+    }
+    EXPECT_EQ(mat_result1, this->mat_ltarget_f * r_value);
+    EXPECT_EQ(mat_result2, l_value * this->mat_rtarget_f);
+}
+TYPED_TEST(MarithArithmeticOperatorTest, MatrixProduction) {
+    mcalc::Marith<TypeParam, m, n2> mat_result;
+    for (std::size_t i = 0; i < m; i++) {
+        for (std::size_t j = 0; j < n2; j++) {
+            mat_result.at(i, j) = 0;
+            for (std::size_t k = 0; k < n; k++) {
+                mat_result.at(i, j) += this->mat_ltarget_f.at_const(i, k) * this->mat_rtarget_prod_f.at_const(k, j);
+            }
+        }
+    }
+    EXPECT_EQ(mat_result, this->mat_ltarget_f * this->mat_rtarget_prod_f);
+}
 } // namespace
 
 int main(int argc, char** argv) {

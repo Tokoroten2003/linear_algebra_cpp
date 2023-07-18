@@ -23,7 +23,17 @@ public:
     inline std::array<T, colN>& at(std::size_t i);
 };
 
-namespace impl {} // namespace impl
+namespace impl {
+    namespace elemRowXform {
+        template<typename T, std::size_t rowN, std::size_t colN>
+        Marith<T, rowN, colN>& interchange_(Marith<T, rowN, colN>& mat, std::size_t i, std::size_t j);
+        template <typename T, std::size_t rowN, std::size_t colN>
+        Marith<T, rowN, colN>& multiplyAndAdd_(Marith<T, rowN, colN>& mat, T s, std::size_t i, std::size_t j);
+        template <typename T, std::size_t rowN, std::size_t colN>
+        Marith<T, rowN, colN>& multiply_(Marith<T, rowN, colN>& mat, T s, std::size_t i);
+    } // namespace elemRowXform
+
+} // namespace impl
 
 } // namespace mcalc
 

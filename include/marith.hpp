@@ -23,7 +23,17 @@ public:
     inline std::array<T, colN>& at(std::size_t i);
 };
 
-namespace impl {} // namespace impl
+namespace impl {
+    namespace elemRowXform {
+        template <typename T, std::size_t rowN, std::size_t colN>
+        Marith<T, rowN, colN>& interchange_(Marith<T, rowN, colN>& mat, std::size_t i, std::size_t j);
+        template <typename T, std::size_t rowN, std::size_t colN>
+        Marith<T, rowN, colN>& multiplyAndAdd_(Marith<T, rowN, colN>& mat, T s, std::size_t i, std::size_t j);
+        template <typename T, std::size_t rowN, std::size_t colN>
+        Marith<T, rowN, colN>& multiply_(Marith<T, rowN, colN>& mat, T s, std::size_t i);
+    } // namespace elemRowXform
+
+} // namespace impl
 
 } // namespace mcalc
 
@@ -63,4 +73,31 @@ inline const std::array<T, colN>& mcalc::Marith<T, rowN, colN>::at_const(std::si
 template <typename T, std::size_t rowN, std::size_t colN>
 inline std::array<T, colN>& mcalc::Marith<T, rowN, colN>::at(std::size_t i) {
     return elems.at(i);
+}
+
+// impl
+template <typename T, std::size_t rowN, std::size_t colN>
+mcalc::Marith<T, rowN, colN>&
+mcalc::impl::elemRowXform::interchange_(mcalc::Marith<T, rowN, colN>& mat, std::size_t i, std::size_t j) {
+    const std::array<T, colN> mat_at_i = mat.at_const(i);
+
+    mat.at(i) = mat.at_const(j);
+    mat.at(j) = mat_at_i;
+    return mat;
+}
+template <typename T, std::size_t rowN, std::size_t colN>
+mcalc::Marith<T, rowN, colN>&
+mcalc::impl::elemRowXform::multiplyAndAdd_(mcalc::Marith<T, rowN, colN>& mat, T s, std::size_t i, std::size_t j) {
+    for (std::size_t k = 0; k < colN; k++) {
+        mat.at(j, k) += mat.at_const(i, k) * s;
+    }
+    return mat;
+}
+template <typename T, std::size_t rowN, std::size_t colN>
+mcalc::Marith<T, rowN, colN>&
+mcalc::impl::elemRowXform::multiply_(mcalc::Marith<T, rowN, colN>& mat, T s, std::size_t i) {
+    for (std::size_t j = 0; j < colN; j++) {
+        mat.at(i, j) *= s;
+    }
+    return mat;
 }

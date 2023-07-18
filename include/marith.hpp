@@ -38,6 +38,7 @@ private:
     inline Marith<U, rowN2, colN2> conversion() const;
 };
 
+
 template <typename T, std::size_t rowN, std::size_t colN>
 inline std::ostream& operator<<(std::ostream& l_stream, const Marith<T, rowN, colN>& r_mat);
 template <typename T, std::size_t rowN, std::size_t colN>
@@ -50,6 +51,9 @@ template <typename T, std::size_t rowN, std::size_t colN>
 inline Marith<T, rowN, colN> operator*(const T& l_value, const Marith<T, rowN, colN>& r_mat);
 template <typename T, std::size_t rowN, std::size_t colN, std::size_t colN2>
 inline Marith<T, rowN, colN2> operator*(const Marith<T, rowN, colN>& l_mat, const Marith<T, colN, colN2>& r_mat);
+
+namespace impl {} // namespace impl
+
 } // namespace mcalc
 
 // ---------------------------

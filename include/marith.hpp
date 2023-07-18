@@ -22,6 +22,9 @@ public:
     inline const std::array<T, colN>& at_const(std::size_t i) const;
     inline std::array<T, colN>& at(std::size_t i);
 };
+
+namespace impl {} // namespace impl
+
 } // namespace mcalc
 
 template <typename T, std::size_t rowN, std::size_t colN>
@@ -31,8 +34,7 @@ mcalc::Marith<T, rowN, colN>::Marith(const Marith<T, rowN, colN>& mat) : elems(m
 template <typename T, std::size_t rowN, std::size_t colN>
 mcalc::Marith<T, rowN, colN>::Marith(const Marith<T, rowN, colN>&& mat) : elems(mat.getElems()) {}
 template <typename T, std::size_t rowN, std::size_t colN>
-mcalc::Marith<T, rowN, colN>::Marith(const std::array<std::array<T, colN>, rowN>&& arr) :
-    elems(arr) {}
+mcalc::Marith<T, rowN, colN>::Marith(const std::array<std::array<T, colN>, rowN>&& arr) : elems(arr) {}
 
 template <typename T, std::size_t rowN, std::size_t colN>
 inline const std::array<std::array<T, colN>, rowN>& mcalc::Marith<T, rowN, colN>::getElems() const {

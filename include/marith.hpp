@@ -80,8 +80,9 @@ template <typename T, std::size_t rowN, std::size_t colN>
 mcalc::Marith<T, rowN, colN>&
 mcalc::impl::elemRowXform::interchange_(mcalc::Marith<T, rowN, colN>& mat, std::size_t i, std::size_t j) {
     const std::array<T, colN> mat_at_i = mat.at_const(i);
-    mat.at(i)                          = mat.at_const(j);
-    mat.at(j)                          = mat_at_i;
+
+    mat.at(i) = mat.at_const(j);
+    mat.at(j) = mat_at_i;
     return mat;
 }
 template <typename T, std::size_t rowN, std::size_t colN>

@@ -32,9 +32,9 @@ mcalc::Marith<T, rowN, colN>::Marith() : elems() {}
 template <typename T, std::size_t rowN, std::size_t colN>
 mcalc::Marith<T, rowN, colN>::Marith(const Marith<T, rowN, colN>& mat) : elems(mat.getElems()) {}
 template <typename T, std::size_t rowN, std::size_t colN>
-mcalc::Marith<T, rowN, colN>::Marith(const Marith<T, rowN, colN>&& mat) : elems(mat.getElems()) {}
+mcalc::Marith<T, rowN, colN>::Marith(const Marith<T, rowN, colN>&& mat) : elems(std::move(mat.getElems())) {}
 template <typename T, std::size_t rowN, std::size_t colN>
-mcalc::Marith<T, rowN, colN>::Marith(const std::array<std::array<T, colN>, rowN>&& arr) : elems(arr) {}
+mcalc::Marith<T, rowN, colN>::Marith(const std::array<std::array<T, colN>, rowN>&& arr) : elems(std::move(arr)) {}
 
 template <typename T, std::size_t rowN, std::size_t colN>
 inline const std::array<std::array<T, colN>, rowN>& mcalc::Marith<T, rowN, colN>::getElems() const {

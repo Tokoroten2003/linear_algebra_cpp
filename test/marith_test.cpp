@@ -1,9 +1,21 @@
 #include "marith.hpp"
 
 #include <gtest/gtest.h>
+#include <random>
 
 constexpr size_t m = 5;
 constexpr size_t n = 10;
+
+std::random_device seed_gen;
+std::default_random_engine engine(seed_gen());
+
+float rand_float(float min, float max) {
+    std::uniform_real_distribution dist(min, max);
+    dist(engine);
+}
+
+template <typename T, size_t M, size_t N>
+using Array2D = std::array<std::array<T, N>, M>;
 
 namespace {
 // -------------------
@@ -38,8 +50,8 @@ TEST(MarithConstructorTest, Move) {
     }
 }
 TEST(MarithConstructorTest, FromArray) {
-    std::array<std::array<int, n>, m> arr_int;
-    std::array<std::array<float, n>, m> arr_float;
+    Array2D<int, m, n> arr_int;
+    Array2D<float, m, n> arr_float;
     try {
         mcalc::Marith<int, m, n> marith_int_target(std::move(arr_int));
         mcalc::Marith<float, m, n> marith_float_target(std::move(arr_float));
@@ -53,8 +65,8 @@ TEST(MarithConstructorTest, FromArray) {
 // -----------------
 class MarithAccessTest : public ::testing::Test {
 protected:
-    std::array<std::array<int, n>, m> arr_int_f;
-    std::array<std::array<float, n>, m> arr_float_f;
+    Array2D<int, m, n> arr_int_f;
+    Array2D<float, m, n> arr_float_f;
 
     virtual void SetUp() {
         for (size_t i = 0; i < m; i++) {
@@ -108,6 +120,19 @@ TEST_F(MarithAccessTest, at_const) {
         }
     }
 }
+
+// --------------------------
+// test elementary row xforms
+// --------------------------
+class MarithElemRowXfTest : public ::testing::Test {
+protected:
+    Array2D<float, 3, 2> arr_f1 = {
+        std::array<float, 2> {1, 2},
+          {1, 5},
+          {3, 2}
+    };
+};
+
 } // namespace
 
 int main(int argc, char** argv) {
